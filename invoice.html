@@ -9,19 +9,11 @@
         .logo-container {
             width: 170px;
             height: 170px;
-            border: 2px dashed #ccc;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            margin-bottom: 10px; /* Reduced from 15px to 10px */
-            background: #f9f9f9;
-            transition: all 0.3s ease;
-        }
-
-        .logo-container:hover {
-            border-color: #8B0000;
-            background: #fff;
+            margin-bottom: 10px;
+            background: transparent;
         }
 
         .logo-container img {
@@ -30,21 +22,10 @@
             object-fit: contain;
         }
 
-        .logo-placeholder {
-            font-size: 10px;
-            color: #999;
-            text-align: center;
-            padding: 5px;
-        }
-
-        #logoInput {
-            display: none;
-        }
-
         /* Control Buttons */
         .controls {
             max-width: 210mm;
-            margin: 10px auto; /* Reduced from 20px to 10px */
+            margin: 10px auto;
             display: flex;
             gap: 15px;
             justify-content: center;
@@ -138,10 +119,10 @@
 
         .invoice-container {
             max-width: 210mm;
-            min-height: 330mm; /* Extended from 297mm to prevent cutoff */
+            min-height: 330mm;
             margin: 20px auto;
             background: white;
-            padding: 10mm 20mm 30mm 20mm; /* Reduced top padding from 25mm to 10mm */
+            padding: 10mm 20mm 30mm 20mm;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
@@ -149,7 +130,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 25px; /* Reduced from 35px to 25px */
+            margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 3px solid #8B0000;
         }
@@ -412,15 +393,6 @@
                 display: none;
             }
 
-            .logo-container {
-                border: none !important;
-                background: transparent !important;
-            }
-
-            .logo-placeholder {
-                display: none;
-            }
-
             @page {
                 size: A4;
                 margin: 10mm;
@@ -439,11 +411,10 @@
         <!-- Header -->
         <div class="header">
             <div class="company-info">
-                <!-- Logo Upload -->
-                <div class="logo-container" onclick="document.getElementById('logoInput').click()">
-                    <div class="logo-placeholder">Click to upload logo</div>
+                <!-- Logo - Replace the src with your logo's base64 or use a relative path -->
+                <div class="logo-container">
+                    <img src="logo.png" alt="OMO G Trading And Interior Decoration Logo">
                 </div>
-                <input type="file" id="logoInput" accept="image/*">
                 
                 <div class="company-name">OMO G TRADING AND INTERIOR DECORATION</div>
                 <div class="company-details">
@@ -663,38 +634,11 @@
             });
         }
 
-        // Logo upload functionality
-        document.getElementById('logoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const logoContainer = document.querySelector('.logo-container');
-                    logoContainer.innerHTML = '<img src="' + event.target.result + '" alt="Company Logo">';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Reset invoice function - properly clears all data
+        // Reset invoice function
         function resetInvoice() {
             if (confirm('Are you sure you want to reset the invoice? All changes will be lost.')) {
                 document.querySelector('.invoice-container').innerHTML = originalHTML;
-                
-                // Re-attach logo input event listener after reset
-                setTimeout(() => {
-                    document.getElementById('logoInput').addEventListener('change', function(e) {
-                        const file = e.target.files[0];
-                        if (file && file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = function(event) {
-                                const logoContainer = document.querySelector('.logo-container');
-                                logoContainer.innerHTML = '<img src="' + event.target.result + '" alt="Company Logo">';
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                }, 100);
+                setupPlaceholderClear();
             }
         }
 
