@@ -685,6 +685,20 @@
             margin-bottom: 15px;
         }
 
+        .date-line .line {
+    flex: 1;
+    border-bottom: 1px solid #9ca3af;
+    height: 20px;
+}
+
+.date-line .line.auto-date {
+    border-bottom: none;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+}
+
         .date-line {
             display: flex;
             align-items: center;
@@ -697,6 +711,23 @@
             flex: 1;
             border-bottom: 1px solid #9ca3af;
             height: 20px;
+        }
+
+        .date-input {
+            flex: 1;
+            height: 28px;
+            border: 1px solid #9ca3af;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            background: #fff;
+            color: #1f2937;
+        }
+
+        .date-input:disabled {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
         }
 
         .footer {
@@ -904,8 +935,8 @@
         <button class="theme-btn theme-midnight" onclick="changeTheme('midnight')" title="Midnight Black"></button>
         
         <div class="lang-toggle" style="margin-left: 20px;">
-            <button class="lang-btn active" onclick="changeLanguage('en')">EN</button>
-            <button class="lang-btn" onclick="changeLanguage('ar')">AR</button>
+            <button class="lang-btn active" onclick="changeLanguage('en', this)">EN</button>
+            <button class="lang-btn" onclick="changeLanguage('ar', this)">AR</button>
         </div>
     </div>
 
@@ -936,9 +967,9 @@
                     <p><strong data-ar="التاريخ:">Date:</strong> <span contenteditable="true">February 11, 2025</span></p>
                     <p><strong data-ar="تاريخ الاستحقاق:">Due Date:</strong> <span contenteditable="true">March 13, 2025</span></p>
                     <div class="currency-selector">
-                        <button class="currency-btn active" onclick="changeCurrency('QAR')">QAR</button>
-                        <button class="currency-btn" onclick="changeCurrency('USD')">USD</button>
-                        <button class="currency-btn" onclick="changeCurrency('EUR')">EUR</button>
+                        <button class="currency-btn active" onclick="changeCurrency('QAR', this)">QAR</button>
+                        <button class="currency-btn" onclick="changeCurrency('USD', this)">USD</button>
+                        <button class="currency-btn" onclick="changeCurrency('EUR', this)">EUR</button>
                     </div>
                 </div>
                 <div class="project-ref">
@@ -1029,7 +1060,7 @@
 
         <div class="payment-terms" style="border-left-color: #7a1f1f;">
             <h3 data-ar="الشروط والأحكام">TERMS & CONDITIONS</h3>
-            <div style="font-size: 11px; line-height: 1.8;">
+            <div id="termsConditionsBody" style="font-size: 11px; line-height: 1.8;">
                 <p style="margin-bottom: 8px;">• All items not explicitly listed here are excluded from the Project.</p>
                 <p style="margin-bottom: 8px;">• The total project fee must be settled in full before final completion and handover.</p>
                 <p style="margin-bottom: 8px;">• Any design changes requested after the approved design has been installed will be entirely at the client's financial responsibility.</p>
@@ -1045,39 +1076,39 @@
         </div>
 
         <div class="signature-section">
-            <div class="signature-box">
-                <h4 data-ar="أعده">PREPARED BY</h4>
-                <div class="signature-controls">
-                    <button class="sig-btn" onclick="clearSignature('preparedCanvas')" data-ar="مسح">Clear</button>
-                    <button class="sig-btn" onclick="document.getElementById('preparedSignature').click()" data-ar="تحميل">Upload</button>
-                </div>
-                <div class="signature-canvas-area">
-                    <canvas id="preparedCanvas" class="signature-canvas"></canvas>
-                </div>
-                <input type="file" id="preparedSignature" accept="image/*">
-                <div class="signature-name">OMO G Trading And Interior Decoration</div>
-                <div class="date-line">
-                    <span data-ar="التاريخ:">Date:</span>
-                    <span class="line"></span>
-                </div>
-            </div>
+    <div class="signature-box">
+        <h4 data-ar="أعده">PREPARED BY</h4>
+        <div class="signature-controls">
+            <button class="sig-btn" onclick="clearSignature('preparedCanvas')" data-ar="مسح">Clear</button>
+            <button class="sig-btn" onclick="document.getElementById('preparedSignature').click()" data-ar="تحميل">Upload</button>
+        </div>
+        <div class="signature-canvas-area">
+            <canvas id="preparedCanvas" class="signature-canvas"></canvas>
+        </div>
+        <input type="file" id="preparedSignature" accept="image/*">
+        <div class="signature-name">OMO G Trading And Interior Decoration</div>
+        <div class="date-line">
+            <span data-ar="التاريخ:">Date:</span>
+            <input type="date" id="preparedDateInput" class="date-input" disabled>
+        </div>
+    </div>
 
-            <div class="signature-box">
-                <h4 data-ar="قبل من العميل">ACCEPTED BY (CLIENT)</h4>
-                <div class="signature-controls">
-                    <button class="sig-btn" onclick="clearSignature('clientCanvas')" data-ar="مسح">Clear</button>
-                    <button class="sig-btn" onclick="document.getElementById('clientSignature').click()" data-ar="تحميل">Upload</button>
-                </div>
-                <div class="signature-canvas-area">
-                    <canvas id="clientCanvas" class="signature-canvas"></canvas>
-                </div>
-                <input type="file" id="clientSignature" accept="image/*">
-                <div class="signature-label" data-ar="اسم العميل والتوقيع">Client Name & Signature</div>
-                <div class="date-line">
-                    <span data-ar="التاريخ:">Date:</span>
-                    <span class="line"></span>
-                </div>
-            </div>
+    <div class="signature-box">
+        <h4 data-ar="قبل من العميل">ACCEPTED BY (CLIENT)</h4>
+        <div class="signature-controls">
+            <button class="sig-btn" onclick="clearSignature('clientCanvas')" data-ar="مسح">Clear</button>
+            <button class="sig-btn" onclick="document.getElementById('clientSignature').click()" data-ar="تحميل">Upload</button>
+        </div>
+        <div class="signature-canvas-area">
+            <canvas id="clientCanvas" class="signature-canvas"></canvas>
+        </div>
+        <input type="file" id="clientSignature" accept="image/*">
+        <div class="signature-label" data-ar="اسم العميل والتوقيع">Client Name & Signature</div>
+        <div class="date-line">
+            <span data-ar="التاريخ:">Date:</span>
+            <span class="line" id="clientDate"></span>
+        </div>
+    </div>
         </div>
 
         <div class="footer">
@@ -1096,7 +1127,7 @@
         </div>
 
         <div class="contact-info">
-            <p><strong data-ar="الحجز:">Booking:</strong> bookings@omoginteriors.com | <strong>Instagram:</strong> @omogdecor</p>
+            <p><strong data-ar="الحجز:">Booking:</strong> bookings@omoginteriors.com | <strong data-ar="إنستغرام:">Instagram:</strong> @omogdecor</p>
         </div>
     </div>
 
@@ -1106,6 +1137,9 @@
         let currentLanguage = 'en';
         let discountType = 'percent';
         let autoSaveTimer;
+        const templateVersion = '2.1';
+        const textNodeEnglishCache = new WeakMap();
+        let translationWarningShown = false;
         
         const currencyRates = {
             'QAR': 1,
@@ -1125,15 +1159,63 @@
             loadInvoiceNumber();
         });
 
-        // Auto-save functionality
-        function setupAutoSave() {
-            const editableElements = document.querySelectorAll('[contenteditable="true"]');
-            editableElements.forEach(el => {
-                el.addEventListener('input', triggerAutoSave);
-            });
-
-            document.getElementById('discountValue').addEventListener('input', triggerAutoSave);
+        function enablePreparedDatePicker() {
+            const dateInput = document.getElementById('preparedDateInput');
+            if (!dateInput) return;
+            dateInput.disabled = false;
+            if (!dateInput.value) {
+                const today = new Date();
+                dateInput.value = today.toISOString().split('T')[0];
+            }
         }
+
+        function disablePreparedDatePicker() {
+            const dateInput = document.getElementById('preparedDateInput');
+            if (!dateInput) return;
+            dateInput.value = '';
+            dateInput.disabled = true;
+        }
+
+        function getArabicTermsHtml() {
+            return `
+                <p style="margin-bottom: 8px;">• جميع البنود غير المذكورة صراحةً في هذه الفاتورة تعتبر خارج نطاق المشروع.</p>
+                <p style="margin-bottom: 8px;">• يجب سداد إجمالي قيمة المشروع بالكامل قبل الإتمام النهائي والتسليم.</p>
+                <p style="margin-bottom: 8px;">• أي تغييرات تصميمية مطلوبة بعد اعتماد التصميم أو تركيبه تكون بالكامل على نفقة العميل.</p>
+                <p style="margin-bottom: 8px;">• قد يؤدي التأخير في السداد إلى تعليق المشروع أو تأخير التسليم.</p>
+                <p style="margin-bottom: 8px;">• يُرجى من العميل توضيح جميع متطلبات التصميم قبل التنفيذ، حيث إن التغييرات أثناء التنفيذ قد تؤدي إلى تكاليف إضافية وتمديد مدة العمل.</p>
+                <p style="margin-bottom: 8px;">• المواد والتشطيبات والعناصر خاضعة للتوفر، وقد يتم الاستبدال ببدائل مكافئة بعد موافقة العميل.</p>
+                <p style="margin-bottom: 8px;">• يجب توفير وصول كامل لموقع المشروع خلال ساعات العمل المتفق عليها، وأي تأخير بسبب تقييد الوصول قد يؤثر على المدة والتكلفة.</p>
+                <p style="margin-bottom: 8px;">• يتم توضيح المدد التقديرية عند بدء المشروع، وقد تتغير بسبب توفر المواد أو تأخر رد العميل أو ظروف الموقع غير المتوقعة.</p>
+                <p style="margin-bottom: 15px;">• تطبق فترة ضمان [6-12 شهرًا] على الأعمال المنفذة والمواد تحت الاستخدام الطبيعي، ولا يشمل الضمان سوء الاستخدام أو التلف العرضي أو التعديلات غير المصرح بها.</p>
+                <p style="margin-bottom: 10px; font-style: italic;">شكرًا لاختياركم <strong style="color: #7a1f1f;">OMO G Trading And Interior Decoration</strong> لمشروعكم. نقدر ثقتكم ونتطلع لتقديم نتيجة تتجاوز توقعاتكم.</p>
+                <p style="margin-top: 15px; font-weight: bold; font-size: 12px;">بمجرد التوقيع على هذا المستند، يقر العميل بالموافقة على الخدمات والشروط المذكورة فيه.</p>
+            `;
+        }
+
+        function applyTermsLanguage(lang) {
+            const termsEl = document.getElementById('termsConditionsBody');
+            if (!termsEl) return;
+
+            if (!termsEl.hasAttribute('data-en-content')) {
+                termsEl.setAttribute('data-en-content', termsEl.innerHTML);
+            }
+
+            if (lang === 'ar') {
+                termsEl.innerHTML = getArabicTermsHtml();
+            } else {
+                termsEl.innerHTML = termsEl.getAttribute('data-en-content');
+            }
+        }
+
+    // Auto-save functionality
+    function setupAutoSave() {
+        const editableElements = document.querySelectorAll('[contenteditable="true"]');
+        editableElements.forEach(el => {
+            el.addEventListener('input', triggerAutoSave);
+        });
+
+        document.getElementById('discountValue').addEventListener('input', triggerAutoSave);
+    }
 
         function triggerAutoSave() {
             clearTimeout(autoSaveTimer);
@@ -1153,6 +1235,7 @@
 
         function saveToLocalStorage() {
             const invoiceData = {
+                version: templateVersion,
                 html: document.querySelector('.invoice-container').innerHTML,
                 currency: currentCurrency,
                 language: currentLanguage,
@@ -1167,7 +1250,18 @@
             const saved = localStorage.getItem('omogInvoiceDraft');
             if (saved && confirm('Found a saved draft. Load it?')) {
                 const data = JSON.parse(saved);
+
+                if (data.version !== templateVersion) {
+                    localStorage.removeItem('omogInvoiceDraft');
+                    alert('Old draft format detected and cleared. Please continue with the updated invoice template.');
+                    return;
+                }
+
                 document.querySelector('.invoice-container').innerHTML = data.html;
+                if (!document.getElementById('termsConditionsBody') || !document.getElementById('preparedDateInput')) {
+                    localStorage.removeItem('omogInvoiceDraft');
+                    document.querySelector('.invoice-container').innerHTML = originalHTML;
+                }
                 currentCurrency = data.currency || 'QAR';
                 currentLanguage = data.language || 'en';
                 discountType = data.discountType || 'percent';
@@ -1206,11 +1300,126 @@
             }
         }
 
+        function isTextSkippable(text) {
+            const t = text.trim();
+            if (!t) return true;
+            if (!/[A-Za-z]/.test(t)) return true;
+            if (/^[\d\s.,/%\-+:()[\]|]+$/.test(t)) return true;
+            if (/^[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(t)) return true;
+            if (/^@[\w.]+$/.test(t)) return true;
+            if (/^(www\.|https?:\/\/)/i.test(t)) return true;
+            if (/^(INV|PRJ)-\d/i.test(t)) return true;
+            return false;
+        }
+
+        function shouldSkipNode(node) {
+            const parent = node.parentElement;
+            if (!parent) return true;
+            if (parent.closest('script, style')) return true;
+            if (parent.closest('.lang-toggle, .currency-selector, .theme-selector, .signature-controls')) return true;
+            if (parent.closest('.theme-btn, .lang-btn, .currency-btn')) return true;
+            return false;
+        }
+
+        function collectTranslatableTextNodes() {
+            const nodes = [];
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+            let node;
+            while ((node = walker.nextNode())) {
+                if (shouldSkipNode(node)) continue;
+                const text = node.nodeValue || '';
+                if (isTextSkippable(text)) continue;
+                nodes.push(node);
+            }
+            return nodes;
+        }
+
+        async function translateTextOnline(text, fromLang, toLang) {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(fromLang)}&tl=${encodeURIComponent(toLang)}&dt=t&q=${encodeURIComponent(text)}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Translation request failed');
+            const data = await response.json();
+            if (!Array.isArray(data) || !Array.isArray(data[0])) return text;
+            return data[0].map(part => part[0]).join('');
+        }
+
+        async function translateTextList(textList, fromLang, toLang) {
+            const translatedMap = new Map();
+            const unique = [...new Set(textList)];
+            for (const text of unique) {
+                try {
+                    translatedMap.set(text, await translateTextOnline(text, fromLang, toLang));
+                } catch (err) {
+                    translatedMap.set(text, text);
+                    if (!translationWarningShown) {
+                        translationWarningShown = true;
+                        alert('Live translation could not reach the translation service. Check internet connection and try again.');
+                    }
+                }
+            }
+            return textList.map(text => translatedMap.get(text) || text);
+        }
+
+        async function translateWholePageToArabic() {
+            const editableElements = Array.from(document.querySelectorAll('[contenteditable="true"]'));
+            const editableTexts = [];
+
+            editableElements.forEach(el => {
+                const current = el.textContent.trim();
+                if (!el.hasAttribute('data-en-content')) {
+                    el.setAttribute('data-en-content', current);
+                }
+                const source = el.getAttribute('data-en-content') || current;
+                editableTexts.push(source);
+            });
+
+            const editableTranslated = await translateTextList(editableTexts, 'en', 'ar');
+            editableElements.forEach((el, idx) => {
+                const source = editableTexts[idx];
+                el.textContent = isTextSkippable(source) ? source : editableTranslated[idx];
+            });
+
+            const textNodes = collectTranslatableTextNodes();
+            const nodeSourceTexts = [];
+            textNodes.forEach(node => {
+                if (!textNodeEnglishCache.has(node)) {
+                    textNodeEnglishCache.set(node, node.nodeValue);
+                }
+                nodeSourceTexts.push((textNodeEnglishCache.get(node) || '').trim());
+            });
+
+            const nodeTranslated = await translateTextList(nodeSourceTexts, 'en', 'ar');
+            textNodes.forEach((node, idx) => {
+                const original = textNodeEnglishCache.get(node) || node.nodeValue;
+                if (!isTextSkippable(original)) {
+                    const leading = (original.match(/^\s*/) || [''])[0];
+                    const trailing = (original.match(/\s*$/) || [''])[0];
+                    node.nodeValue = leading + nodeTranslated[idx] + trailing;
+                }
+            });
+        }
+
+        function restoreWholePageToEnglish() {
+            document.querySelectorAll('[contenteditable="true"]').forEach(field => {
+                if (field.hasAttribute('data-en-content')) {
+                    field.textContent = field.getAttribute('data-en-content');
+                }
+            });
+
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+            let node;
+            while ((node = walker.nextNode())) {
+                if (textNodeEnglishCache.has(node)) {
+                    node.nodeValue = textNodeEnglishCache.get(node);
+                }
+            }
+        }
+
         // Language Toggle - FIXED VERSION
-        function changeLanguage(lang) {
+        async function changeLanguage(lang, buttonEl) {
             currentLanguage = lang;
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (buttonEl) buttonEl.classList.add('active');
             
             if (lang === 'ar') {
                 document.body.classList.add('rtl');
@@ -1226,6 +1435,8 @@
                 
                 // Handle contenteditable fields
                 translateEditableFields('ar');
+                applyTermsLanguage('ar');
+                await translateWholePageToArabic();
                 
             } else {
                 document.body.classList.remove('rtl');
@@ -1237,98 +1448,74 @@
                 });
                 
                 translateEditableFields('en');
+                applyTermsLanguage('en');
+                restoreWholePageToEnglish();
             }
             triggerAutoSave();
         }
 
         function translateEditableFields(lang) {
+            const editableFields = document.querySelectorAll('[contenteditable="true"]');
+
             if (lang === 'ar') {
-                // Translate payment terms paragraph
-                const paymentPara = document.getElementById('paymentTermsPara');
-                if (paymentPara && paymentPara.textContent.includes('75% advance payment')) {
-                    paymentPara.setAttribute('data-en-content', paymentPara.textContent);
-                    paymentPara.textContent = 'دفعة مقدمة 75٪ عند الاتفاق، 25٪ عند إتمام المشروع. الدفع مستحق خلال 7 أيام من تاريخ الفاتورة.';
-                }
-                
-                // Translate bank details
+                editableFields.forEach(field => {
+                    const currentText = field.textContent.trim();
+                    if (!field.hasAttribute('data-en-content')) {
+                        field.setAttribute('data-en-content', currentText);
+                    }
+                    const sourceText = field.getAttribute('data-en-content') || currentText;
+                    const translated = translateTextToArabic(sourceText);
+                    if (translated) field.textContent = translated;
+                });
+
                 const bankDetails = document.getElementById('bankDetails');
                 if (bankDetails) {
-                    let html = bankDetails.innerHTML;
-                    bankDetails.setAttribute('data-en-content', html);
-                    html = html.replace(/Bank Name:/g, 'اسم البنك:');
-                    html = html.replace(/Account Name:/g, 'اسم الحساب:');
-                    html = html.replace(/Account Number:/g, 'رقم الحساب:');
-                    html = html.replace(/IBAN:/g, 'الآيبان:');
-                    html = html.replace(/Swift Code:/g, 'رمز السويفت:');
-                    html = html.replace(/\[Your Bank Name\]/g, '[اسم البنك]');
-                    html = html.replace(/\[Your Account Number\]/g, '[رقم الحساب]');
-                    html = html.replace(/\[Your IBAN Number\]/g, '[رقم الآيبان]');
-                    html = html.replace(/\[Your Swift Code\]/g, '[رمز السويفت]');
-                    bankDetails.innerHTML = html;
+                    if (!bankDetails.hasAttribute('data-en-content')) {
+                        bankDetails.setAttribute('data-en-content', bankDetails.innerHTML);
+                    }
+                    bankDetails.innerHTML = translateBankDetailsToArabic(bankDetails.getAttribute('data-en-content'));
                 }
-                
-                // Translate duration field
-                const durationField = document.getElementById('durationField');
-                if (durationField && durationField.textContent.includes('[e.g., 2-3 weeks')) {
-                    durationField.setAttribute('data-en-content', durationField.textContent);
-                    durationField.textContent = '[مثال: 2-3 أسابيع، شهر واحد]';
-                }
-                
-                // Translate "Thank you" paragraph
-                const thankYouPara = document.getElementById('thankYouPara');
-                if (thankYouPara && thankYouPara.textContent.trim() === 'Thank you.') {
-                    thankYouPara.setAttribute('data-en-content', thankYouPara.textContent);
-                    thankYouPara.textContent = 'شكراً لك.';
-                }
-                
-                // Translate client detail placeholders
-                const placeholderMap = {
-                    'Client Name': 'اسم العميل',
-                    'Company Name (if applicable)': 'اسم الشركة (إن وجد)',
-                    'Full Address': 'العنوان الكامل',
-                    '+974 XXXX XXXX': '+974 XXXX XXXX',
-                    'client@email.com': 'client@email.com',
-                    'Project Address': 'عنوان المشروع',
-                    'Zone/Area': 'المنطقة',
-                    'City': 'المدينة'
-                };
-                
-                document.querySelectorAll('.client-details span[contenteditable="true"]').forEach(span => {
-                    const text = span.textContent.trim();
-                    if (placeholderMap[text]) {
-                        span.setAttribute('data-en-content', text);
-                        span.textContent = placeholderMap[text];
+            } else {
+                editableFields.forEach(field => {
+                    if (field.hasAttribute('data-en-content')) {
+                        field.textContent = field.getAttribute('data-en-content');
                     }
                 });
-                
-            } else {
-                // Restore English
-                const paymentPara = document.getElementById('paymentTermsPara');
-                if (paymentPara && paymentPara.getAttribute('data-en-content')) {
-                    paymentPara.textContent = paymentPara.getAttribute('data-en-content');
-                }
-                
+
                 const bankDetails = document.getElementById('bankDetails');
-                if (bankDetails && bankDetails.getAttribute('data-en-content')) {
+                if (bankDetails && bankDetails.hasAttribute('data-en-content')) {
                     bankDetails.innerHTML = bankDetails.getAttribute('data-en-content');
                 }
-                
-                const durationField = document.getElementById('durationField');
-                if (durationField && durationField.getAttribute('data-en-content')) {
-                    durationField.textContent = durationField.getAttribute('data-en-content');
-                }
-                
-                const thankYouPara = document.getElementById('thankYouPara');
-                if (thankYouPara && thankYouPara.getAttribute('data-en-content')) {
-                    thankYouPara.textContent = thankYouPara.getAttribute('data-en-content');
-                }
-                
-                document.querySelectorAll('.client-details span[contenteditable="true"]').forEach(span => {
-                    if (span.getAttribute('data-en-content')) {
-                        span.textContent = span.getAttribute('data-en-content');
-                    }
-                });
             }
+        }
+
+        function translateTextToArabic(text) {
+            const map = {
+                '75% advance payment upon agreement, 25% upon project completion. Payment due within 7 days of invoice date.': 'دفعة مقدمة 75٪ عند الاتفاق، و25٪ عند إتمام المشروع. يستحق الدفع خلال 7 أيام من تاريخ الفاتورة.',
+                'Thank you.': 'شكراً لك.',
+                '[e.g., 2-3 weeks, 1 month]': '[مثال: 2-3 أسابيع، شهر واحد]',
+                'Client Name': 'اسم العميل',
+                'Company Name (if applicable)': 'اسم الشركة (إن وجد)',
+                'Full Address': 'العنوان الكامل',
+                'Project Address': 'عنوان المشروع',
+                'Zone/Area': 'المنطقة',
+                'City': 'المدينة',
+                'Description of item/service': 'وصف العنصر/الخدمة'
+            };
+            return map[text] || text;
+        }
+
+        function translateBankDetailsToArabic(html) {
+            return html
+                .replace(/Bank Name:/g, 'اسم البنك:')
+                .replace(/Account Name:/g, 'اسم الحساب:')
+                .replace(/Account Number:/g, 'رقم الحساب:')
+                .replace(/IBAN:/g, 'الآيبان:')
+                .replace(/Swift Code:/g, 'رمز السويفت:')
+                .replace(/\[Your Bank Name\]/g, '[اسم البنك]')
+                .replace(/\[Your Account Number\]/g, '[رقم الحساب]')
+                .replace(/\[Your IBAN Number\]/g, '[رقم الآيبان]')
+                .replace(/\[Your Swift Code\]/g, '[رمز السويفت]');
         }
 
         // Discount Functions
@@ -1405,6 +1592,12 @@
                 }
 
                 function stopDrawing() {
+                    if (isDrawing) {
+                        if (id === 'preparedCanvas') {
+                            enablePreparedDatePicker();
+                        }
+                        triggerAutoSave();
+                    }
                     isDrawing = false;
                 }
 
@@ -1444,6 +1637,9 @@
         function clearSignature(canvasId) {
             const { canvas, ctx } = canvases[canvasId];
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (canvasId === 'preparedCanvas') {
+                disablePreparedDatePicker();
+            }
             triggerAutoSave();
         }
 
@@ -1468,6 +1664,9 @@
                         const x = (canvas.width / 2) - (img.width / 2) * scale;
                         const y = (canvas.height / 2) - (img.height / 2) * scale;
                         ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        if (canvasId === 'preparedCanvas') {
+                            enablePreparedDatePicker();
+                        }
                         triggerAutoSave();
                     };
                     img.src = e.target.result;
@@ -1483,10 +1682,10 @@
             triggerAutoSave();
         }
 
-        function changeCurrency(currency) {
+        function changeCurrency(currency, buttonEl) {
             currentCurrency = currency;
             document.querySelectorAll('.currency-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (buttonEl) buttonEl.classList.add('active');
             document.querySelectorAll('.currency-symbol').forEach(el => el.textContent = currency);
             calculateTotal();
             triggerAutoSave();
