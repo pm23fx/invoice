@@ -36,6 +36,29 @@
             --accent: #6b7280;
         }
 
+        /* Arabic RTL Support */
+        body.rtl {
+            direction: rtl;
+        }
+
+        body.rtl .header,
+        body.rtl .client-section,
+        body.rtl .footer {
+            direction: rtl;
+        }
+
+        body.rtl .invoice-title {
+            text-align: left;
+        }
+
+        body.rtl .text-right {
+            text-align: left;
+        }
+
+        body.rtl .text-left {
+            text-align: right;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -62,6 +85,26 @@
             border: 1px solid #ece7de;
             border-radius: 14px;
             box-shadow: 0 20px 45px rgba(24, 22, 18, 0.12);
+        }
+
+        /* Auto-save indicator */
+        .autosave-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .autosave-indicator.show {
+            opacity: 1;
         }
 
         /* Theme Selector */
@@ -103,6 +146,33 @@
         .theme-royal { background: linear-gradient(135deg, #1e3a8a 0%, #c0a062 100%); }
         .theme-emerald { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
         .theme-midnight { background: linear-gradient(135deg, #1f2937 0%, #6b7280 100%); }
+
+        /* Language Toggle */
+        .lang-toggle {
+            display: inline-flex;
+            gap: 5px;
+            background: var(--soft);
+            padding: 5px;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        .lang-btn {
+            padding: 5px 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--brand);
+            color: white;
+        }
 
         /* Currency Selector */
         .currency-selector {
@@ -346,6 +416,20 @@
             margin: 4px 0;
         }
 
+        /* Project Reference Field */
+        .project-ref {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+
+        .project-ref strong {
+            color: var(--brand);
+            font-size: 11px;
+        }
+
         .client-section {
             display: flex;
             justify-content: space-between;
@@ -441,6 +525,10 @@
             font-size: 13px;
         }
 
+        .total-row.discount {
+            color: #059669;
+        }
+
         .total-row.final {
             border-top: 2px solid var(--brand);
             margin-top: 10px;
@@ -448,6 +536,39 @@
             font-weight: 800;
             font-size: 17px;
             color: var(--brand);
+        }
+
+        /* Discount Controls */
+        .discount-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .discount-input {
+            width: 80px;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .discount-type-btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .discount-type-btn.active {
+            background: var(--brand);
+            color: white;
+            border-color: var(--brand);
         }
 
         .payment-terms {
@@ -738,8 +859,11 @@
             .add-row-btn,
             .delete-row-btn,
             .currency-selector,
+            .lang-toggle,
             .signature-controls,
-            .sig-btn {
+            .sig-btn,
+            .discount-controls,
+            .autosave-indicator {
                 display: none !important;
             }
 
@@ -768,6 +892,9 @@
     </style>
 </head>
 <body>
+    <!-- Auto-save Indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">✓ Saved</div>
+
     <!-- Theme Selector -->
     <div class="theme-selector">
         <label>Theme:</label>
@@ -775,6 +902,11 @@
         <button class="theme-btn theme-royal" onclick="changeTheme('royal')" title="Royal Blue"></button>
         <button class="theme-btn theme-emerald" onclick="changeTheme('emerald')" title="Emerald Green"></button>
         <button class="theme-btn theme-midnight" onclick="changeTheme('midnight')" title="Midnight Black"></button>
+        
+        <div class="lang-toggle" style="margin-left: 20px;">
+            <button class="lang-btn active" onclick="changeLanguage('en')">EN</button>
+            <button class="lang-btn" onclick="changeLanguage('ar')">AR</button>
+        </div>
     </div>
 
     <!-- Control Buttons -->
@@ -791,44 +923,47 @@
                     <img src="logo.png" alt="OMO G Trading And Interior Decoration Logo">
                 </div>
 
-                <div class="company-name">OMO G TRADING AND INTERIOR DECORATION</div>
+                <div class="company-name" data-ar="تجارة ومو جي والديكور الداخلي">OMO G TRADING AND INTERIOR DECORATION</div>
                 <div class="company-details">
-                    <strong>Qatar Office:</strong> Office 70, 2nd Floor Block E, Al Mirqab Mall, Doha, Qatar<br>
-                    <strong>CR No:</strong> 235664
+                    <strong data-ar="مكتب قطر:">Qatar Office:</strong> <span data-ar="مكتب 70، الطابق الثاني بلوك E، مول المرقاب، الدوحة، قطر">Office 70, 2nd Floor Block E, Al Mirqab Mall, Doha, Qatar</span><br>
+                    <strong data-ar="رقم السجل التجاري:">CR No:</strong> 235664
                 </div>
             </div>
             <div class="invoice-title">
-                <h1>INVOICE</h1>
+                <h1 data-ar="فاتورة">INVOICE</h1>
                 <div class="invoice-meta">
-                    <p><strong>Invoice #:</strong> <span contenteditable="true">INV-2025-001</span></p>
-                    <p><strong>Date:</strong> <span contenteditable="true">February 11, 2025</span></p>
-                    <p><strong>Due Date:</strong> <span contenteditable="true">March 13, 2025</span></p>
+                    <p><strong data-ar="رقم الفاتورة:">Invoice #:</strong> <span contenteditable="true" id="invoiceNumber">INV-2025-001</span></p>
+                    <p><strong data-ar="التاريخ:">Date:</strong> <span contenteditable="true">February 11, 2025</span></p>
+                    <p><strong data-ar="تاريخ الاستحقاق:">Due Date:</strong> <span contenteditable="true">March 13, 2025</span></p>
                     <div class="currency-selector">
                         <button class="currency-btn active" onclick="changeCurrency('QAR')">QAR</button>
                         <button class="currency-btn" onclick="changeCurrency('USD')">USD</button>
                         <button class="currency-btn" onclick="changeCurrency('EUR')">EUR</button>
                     </div>
                 </div>
+                <div class="project-ref">
+                    <strong data-ar="مرجع المشروع:">Project Reference:</strong> <span contenteditable="true" style="display: inline-block; min-width: 150px; border-bottom: 1px solid #ddd; padding: 2px 5px;">PRJ-2025-001</span>
+                </div>
             </div>
         </div>
 
         <div class="client-section">
             <div class="bill-to">
-                <div class="section-title">BILL TO:</div>
+                <div class="section-title" data-ar="إلى:">BILL TO:</div>
                 <div class="client-details">
-                    <div style="margin-bottom: 8px;"><strong>Name:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Client Name</span></div>
-                    <div style="margin-bottom: 8px;"><strong>Company:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Company Name (if applicable)</span></div>
-                    <div style="margin-bottom: 8px;"><strong>Address:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Full Address</span></div>
-                    <div style="margin-bottom: 8px;"><strong>Phone:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">+974 XXXX XXXX</span></div>
-                    <div style="margin-bottom: 8px;"><strong>Email:</strong> <span contenteditable="true" style="display: inline-block; min-width: 250px; border-bottom: 1px solid #ddd;">client@email.com</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="الاسم:">Name:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Client Name</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="الشركة:">Company:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Company Name (if applicable)</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="العنوان:">Address:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Full Address</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="الهاتف:">Phone:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">+974 XXXX XXXX</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="البريد الإلكتروني:">Email:</strong> <span contenteditable="true" style="display: inline-block; min-width: 250px; border-bottom: 1px solid #ddd;">client@email.com</span></div>
                 </div>
             </div>
             <div class="ship-to">
-                <div class="section-title">PROJECT LOCATION:</div>
+                <div class="section-title" data-ar="موقع المشروع:">PROJECT LOCATION:</div>
                 <div class="client-details">
-                    <div style="margin-bottom: 8px;"><strong>Address:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Project Address</span></div>
-                    <div style="margin-bottom: 8px;"><strong>Zone/Area:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">Zone/Area</span></div>
-                    <div style="margin-bottom: 8px;"><strong>City:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">City</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="العنوان:">Address:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Project Address</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="المنطقة:">Zone/Area:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">Zone/Area</span></div>
+                    <div style="margin-bottom: 8px;"><strong data-ar="المدينة:">City:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">City</span></div>
                 </div>
             </div>
         </div>
@@ -836,38 +971,48 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 8%">Item #</th>
-                    <th style="width: 10%">Image</th>
-                    <th style="width: 32%">Description</th>
-                    <th style="width: 12%" class="text-center">Quantity</th>
-                    <th style="width: 12%" class="text-right">Unit Price</th>
-                    <th style="width: 14%" class="text-right">Amount (<span class="currency-symbol">QAR</span>)</th>
-                    <th style="width: 12%" class="text-center">Action</th>
+                    <th style="width: 8%" data-ar="رقم">Item #</th>
+                    <th style="width: 10%" data-ar="صورة">Image</th>
+                    <th style="width: 32%" data-ar="الوصف">Description</th>
+                    <th style="width: 12%" class="text-center" data-ar="الكمية">Quantity</th>
+                    <th style="width: 12%" class="text-right" data-ar="سعر الوحدة">Unit Price</th>
+                    <th style="width: 14%" class="text-right"><span data-ar="المبلغ">Amount</span> (<span class="currency-symbol">QAR</span>)</th>
+                    <th style="width: 12%" class="text-center" data-ar="إجراء">Action</th>
                 </tr>
             </thead>
             <tbody id="itemsTableBody"></tbody>
         </table>
 
-        <button class="add-row-btn" onclick="addRow()">➕ Add New Item</button>
+        <button class="add-row-btn" onclick="addRow()"><span data-ar="➕ إضافة عنصر جديد">➕ Add New Item</span></button>
 
         <div class="totals-section">
             <div class="totals">
                 <div class="total-row">
-                    <span>Subtotal:</span>
+                    <span data-ar="المجموع الفرعي:">Subtotal:</span>
                     <span><span class="subtotal-amount">0.00</span> <span class="currency-symbol">QAR</span></span>
                 </div>
+                <div class="total-row discount" id="discountRow" style="display: none;">
+                    <span><span data-ar="خصم">Discount</span> (<span id="discountDisplay">0</span>):</span>
+                    <span>-<span class="discount-amount">0.00</span> <span class="currency-symbol">QAR</span></span>
+                </div>
+                <div class="discount-controls">
+                    <input type="number" class="discount-input" id="discountValue" placeholder="0" min="0" onchange="applyDiscount()">
+                    <button class="discount-type-btn active" id="percentBtn" onclick="setDiscountType('percent')">%</button>
+                    <button class="discount-type-btn" id="fixedBtn" onclick="setDiscountType('fixed')"><span class="currency-symbol">QAR</span></button>
+                    <button class="sig-btn" onclick="clearDiscount()" data-ar="مسح الخصم">Clear Discount</button>
+                </div>
                 <div class="total-row final">
-                    <span>TOTAL:</span>
+                    <span data-ar="الإجمالي:">TOTAL:</span>
                     <span><span class="total-amount">0.00</span> <span class="currency-symbol">QAR</span></span>
                 </div>
             </div>
         </div>
 
         <div class="payment-terms">
-            <h3>PAYMENT TERMS & NOTES</h3>
-            <p contenteditable="true">75% advance payment upon agreement, 25% upon project completion. Payment due within 7 days of invoice date.</p>
+            <h3 data-ar="شروط الدفع والملاحظات">PAYMENT TERMS & NOTES</h3>
+            <p contenteditable="true" id="paymentTermsPara">75% advance payment upon agreement, 25% upon project completion. Payment due within 7 days of invoice date.</p>
 
-            <div class="bank-details" contenteditable="true">
+            <div class="bank-details" id="bankDetails" contenteditable="true">
                 <strong>Bank Name:</strong> [Your Bank Name]<br>
                 <strong>Account Name:</strong> OMO G TRADING AND INTERIOR DECORATION<br>
                 <strong>Account Number:</strong> [Your Account Number]<br>
@@ -876,14 +1021,14 @@
             </div>
 
             <div style="margin-top: 15px; padding: 10px; background: #fff; border-radius: 6px; border: 1px solid #ddd;">
-                <strong style="color: #7a1f1f;">Project Completion Duration:</strong> <span contenteditable="true" style="display: inline-block; min-width: 250px; border-bottom: 1px solid #ddd; padding: 2px 5px;">[e.g., 2-3 weeks, 1 month]</span>
+                <strong style="color: #7a1f1f;" data-ar="مدة إنجاز المشروع:">Project Completion Duration:</strong> <span contenteditable="true" id="durationField" style="display: inline-block; min-width: 250px; border-bottom: 1px solid #ddd; padding: 2px 5px;">[e.g., 2-3 weeks, 1 month]</span>
             </div>
 
-            <p style="margin-top: 10px;" contenteditable="true">Thank you.</p>
+            <p style="margin-top: 10px;" contenteditable="true" id="thankYouPara">Thank you.</p>
         </div>
 
         <div class="payment-terms" style="border-left-color: #7a1f1f;">
-            <h3>TERMS & CONDITIONS</h3>
+            <h3 data-ar="الشروط والأحكام">TERMS & CONDITIONS</h3>
             <div style="font-size: 11px; line-height: 1.8;">
                 <p style="margin-bottom: 8px;">• All items not explicitly listed here are excluded from the Project.</p>
                 <p style="margin-bottom: 8px;">• The total project fee must be settled in full before final completion and handover.</p>
@@ -901,10 +1046,10 @@
 
         <div class="signature-section">
             <div class="signature-box">
-                <h4>PREPARED BY</h4>
+                <h4 data-ar="أعده">PREPARED BY</h4>
                 <div class="signature-controls">
-                    <button class="sig-btn" onclick="clearSignature('preparedCanvas')">Clear</button>
-                    <button class="sig-btn" onclick="document.getElementById('preparedSignature').click()">Upload</button>
+                    <button class="sig-btn" onclick="clearSignature('preparedCanvas')" data-ar="مسح">Clear</button>
+                    <button class="sig-btn" onclick="document.getElementById('preparedSignature').click()" data-ar="تحميل">Upload</button>
                 </div>
                 <div class="signature-canvas-area">
                     <canvas id="preparedCanvas" class="signature-canvas"></canvas>
@@ -912,24 +1057,24 @@
                 <input type="file" id="preparedSignature" accept="image/*">
                 <div class="signature-name">OMO G Trading And Interior Decoration</div>
                 <div class="date-line">
-                    <span>Date:</span>
+                    <span data-ar="التاريخ:">Date:</span>
                     <span class="line"></span>
                 </div>
             </div>
 
             <div class="signature-box">
-                <h4>ACCEPTED BY (CLIENT)</h4>
+                <h4 data-ar="قبل من العميل">ACCEPTED BY (CLIENT)</h4>
                 <div class="signature-controls">
-                    <button class="sig-btn" onclick="clearSignature('clientCanvas')">Clear</button>
-                    <button class="sig-btn" onclick="document.getElementById('clientSignature').click()">Upload</button>
+                    <button class="sig-btn" onclick="clearSignature('clientCanvas')" data-ar="مسح">Clear</button>
+                    <button class="sig-btn" onclick="document.getElementById('clientSignature').click()" data-ar="تحميل">Upload</button>
                 </div>
                 <div class="signature-canvas-area">
                     <canvas id="clientCanvas" class="signature-canvas"></canvas>
                 </div>
                 <input type="file" id="clientSignature" accept="image/*">
-                <div class="signature-label">Client Name & Signature</div>
+                <div class="signature-label" data-ar="اسم العميل والتوقيع">Client Name & Signature</div>
                 <div class="date-line">
-                    <span>Date:</span>
+                    <span data-ar="التاريخ:">Date:</span>
                     <span class="line"></span>
                 </div>
             </div>
@@ -937,13 +1082,13 @@
 
         <div class="footer">
             <div class="office-info">
-                <h4>QATAR OFFICE</h4>
+                <h4 data-ar="مكتب قطر">QATAR OFFICE</h4>
                 <p>Office 70, 2nd Floor Block E,<br>
                 Al Mirqab Mall, Doha, Qatar<br>
                 CR No: 235664</p>
             </div>
             <div class="office-info" style="text-align: right;">
-                <h4>CONTACT INFORMATION</h4>
+                <h4 data-ar="معلومات الاتصال">CONTACT INFORMATION</h4>
                 <p>Tel: +974 7102 1381<br>
                 Email: info@omoginteriors.com<br>
                 Website: www.omoginteriors.com</p>
@@ -951,13 +1096,17 @@
         </div>
 
         <div class="contact-info">
-            <p><strong>Booking:</strong> bookings@omoginteriors.com | <strong>Instagram:</strong> @omogdecor</p>
+            <p><strong data-ar="الحجز:">Booking:</strong> bookings@omoginteriors.com | <strong>Instagram:</strong> @omogdecor</p>
         </div>
     </div>
 
     <script>
         const originalHTML = document.querySelector('.invoice-container').innerHTML;
         let currentCurrency = 'QAR';
+        let currentLanguage = 'en';
+        let discountType = 'percent';
+        let autoSaveTimer;
+        
         const currencyRates = {
             'QAR': 1,
             'USD': 0.27,
@@ -971,14 +1120,250 @@
             setupPlaceholderClear();
             setupSignatureCanvases();
             setupImageUploads();
+            loadFromLocalStorage();
+            setupAutoSave();
+            loadInvoiceNumber();
         });
+
+        // Auto-save functionality
+        function setupAutoSave() {
+            const editableElements = document.querySelectorAll('[contenteditable="true"]');
+            editableElements.forEach(el => {
+                el.addEventListener('input', triggerAutoSave);
+            });
+
+            document.getElementById('discountValue').addEventListener('input', triggerAutoSave);
+        }
+
+        function triggerAutoSave() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                saveToLocalStorage();
+                showAutoSaveIndicator();
+            }, 2000);
+        }
+
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function saveToLocalStorage() {
+            const invoiceData = {
+                html: document.querySelector('.invoice-container').innerHTML,
+                currency: currentCurrency,
+                language: currentLanguage,
+                discountType: discountType,
+                discountValue: document.getElementById('discountValue').value,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('omogInvoiceDraft', JSON.stringify(invoiceData));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('omogInvoiceDraft');
+            if (saved && confirm('Found a saved draft. Load it?')) {
+                const data = JSON.parse(saved);
+                document.querySelector('.invoice-container').innerHTML = data.html;
+                currentCurrency = data.currency || 'QAR';
+                currentLanguage = data.language || 'en';
+                discountType = data.discountType || 'percent';
+                
+                if (data.discountValue) {
+                    document.getElementById('discountValue').value = data.discountValue;
+                }
+                
+                setupPlaceholderClear();
+                setupSignatureCanvases();
+                setupImageUploads();
+                setupAutoSave();
+                calculateTotal();
+            }
+        }
+
+        // Invoice Number Management
+        function loadInvoiceNumber() {
+            const lastNumber = localStorage.getItem('omogLastInvoiceNumber') || 0;
+            const nextNumber = parseInt(lastNumber) + 1;
+            const invoiceNum = `INV-2025-${String(nextNumber).padStart(3, '0')}`;
+            const invoiceNumberEl = document.getElementById('invoiceNumber');
+            if (invoiceNumberEl) {
+                invoiceNumberEl.textContent = invoiceNum;
+            }
+        }
+
+        function saveInvoiceNumber() {
+            const invoiceNumberEl = document.getElementById('invoiceNumber');
+            if (invoiceNumberEl) {
+                const invoiceNum = invoiceNumberEl.textContent;
+                const match = invoiceNum.match(/INV-2025-(\d+)/);
+                if (match) {
+                    localStorage.setItem('omogLastInvoiceNumber', match[1]);
+                }
+            }
+        }
+
+        // Language Toggle - FIXED VERSION
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (lang === 'ar') {
+                document.body.classList.add('rtl');
+                
+                // Translate all static text with data-ar attributes
+                document.querySelectorAll('[data-ar]').forEach(el => {
+                    if (el.getAttribute('contenteditable') !== 'true' && !el.id) {
+                        const temp = el.textContent;
+                        el.setAttribute('data-en', temp);
+                        el.textContent = el.getAttribute('data-ar');
+                    }
+                });
+                
+                // Handle contenteditable fields
+                translateEditableFields('ar');
+                
+            } else {
+                document.body.classList.remove('rtl');
+                
+                document.querySelectorAll('[data-en]').forEach(el => {
+                    if (el.getAttribute('contenteditable') !== 'true' && !el.id) {
+                        el.textContent = el.getAttribute('data-en');
+                    }
+                });
+                
+                translateEditableFields('en');
+            }
+            triggerAutoSave();
+        }
+
+        function translateEditableFields(lang) {
+            if (lang === 'ar') {
+                // Translate payment terms paragraph
+                const paymentPara = document.getElementById('paymentTermsPara');
+                if (paymentPara && paymentPara.textContent.includes('75% advance payment')) {
+                    paymentPara.setAttribute('data-en-content', paymentPara.textContent);
+                    paymentPara.textContent = 'دفعة مقدمة 75٪ عند الاتفاق، 25٪ عند إتمام المشروع. الدفع مستحق خلال 7 أيام من تاريخ الفاتورة.';
+                }
+                
+                // Translate bank details
+                const bankDetails = document.getElementById('bankDetails');
+                if (bankDetails) {
+                    let html = bankDetails.innerHTML;
+                    bankDetails.setAttribute('data-en-content', html);
+                    html = html.replace(/Bank Name:/g, 'اسم البنك:');
+                    html = html.replace(/Account Name:/g, 'اسم الحساب:');
+                    html = html.replace(/Account Number:/g, 'رقم الحساب:');
+                    html = html.replace(/IBAN:/g, 'الآيبان:');
+                    html = html.replace(/Swift Code:/g, 'رمز السويفت:');
+                    html = html.replace(/\[Your Bank Name\]/g, '[اسم البنك]');
+                    html = html.replace(/\[Your Account Number\]/g, '[رقم الحساب]');
+                    html = html.replace(/\[Your IBAN Number\]/g, '[رقم الآيبان]');
+                    html = html.replace(/\[Your Swift Code\]/g, '[رمز السويفت]');
+                    bankDetails.innerHTML = html;
+                }
+                
+                // Translate duration field
+                const durationField = document.getElementById('durationField');
+                if (durationField && durationField.textContent.includes('[e.g., 2-3 weeks')) {
+                    durationField.setAttribute('data-en-content', durationField.textContent);
+                    durationField.textContent = '[مثال: 2-3 أسابيع، شهر واحد]';
+                }
+                
+                // Translate "Thank you" paragraph
+                const thankYouPara = document.getElementById('thankYouPara');
+                if (thankYouPara && thankYouPara.textContent.trim() === 'Thank you.') {
+                    thankYouPara.setAttribute('data-en-content', thankYouPara.textContent);
+                    thankYouPara.textContent = 'شكراً لك.';
+                }
+                
+                // Translate client detail placeholders
+                const placeholderMap = {
+                    'Client Name': 'اسم العميل',
+                    'Company Name (if applicable)': 'اسم الشركة (إن وجد)',
+                    'Full Address': 'العنوان الكامل',
+                    '+974 XXXX XXXX': '+974 XXXX XXXX',
+                    'client@email.com': 'client@email.com',
+                    'Project Address': 'عنوان المشروع',
+                    'Zone/Area': 'المنطقة',
+                    'City': 'المدينة'
+                };
+                
+                document.querySelectorAll('.client-details span[contenteditable="true"]').forEach(span => {
+                    const text = span.textContent.trim();
+                    if (placeholderMap[text]) {
+                        span.setAttribute('data-en-content', text);
+                        span.textContent = placeholderMap[text];
+                    }
+                });
+                
+            } else {
+                // Restore English
+                const paymentPara = document.getElementById('paymentTermsPara');
+                if (paymentPara && paymentPara.getAttribute('data-en-content')) {
+                    paymentPara.textContent = paymentPara.getAttribute('data-en-content');
+                }
+                
+                const bankDetails = document.getElementById('bankDetails');
+                if (bankDetails && bankDetails.getAttribute('data-en-content')) {
+                    bankDetails.innerHTML = bankDetails.getAttribute('data-en-content');
+                }
+                
+                const durationField = document.getElementById('durationField');
+                if (durationField && durationField.getAttribute('data-en-content')) {
+                    durationField.textContent = durationField.getAttribute('data-en-content');
+                }
+                
+                const thankYouPara = document.getElementById('thankYouPara');
+                if (thankYouPara && thankYouPara.getAttribute('data-en-content')) {
+                    thankYouPara.textContent = thankYouPara.getAttribute('data-en-content');
+                }
+                
+                document.querySelectorAll('.client-details span[contenteditable="true"]').forEach(span => {
+                    if (span.getAttribute('data-en-content')) {
+                        span.textContent = span.getAttribute('data-en-content');
+                    }
+                });
+            }
+        }
+
+        // Discount Functions
+        function setDiscountType(type) {
+            discountType = type;
+            document.getElementById('percentBtn').classList.remove('active');
+            document.getElementById('fixedBtn').classList.remove('active');
+            document.getElementById(type === 'percent' ? 'percentBtn' : 'fixedBtn').classList.add('active');
+            applyDiscount();
+        }
+
+        function applyDiscount() {
+            const value = parseFloat(document.getElementById('discountValue').value) || 0;
+            if (value > 0) {
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('discountDisplay').textContent = 
+                    discountType === 'percent' ? value + '%' : value + ' ' + currentCurrency;
+            } else {
+                document.getElementById('discountRow').style.display = 'none';
+            }
+            calculateTotal();
+            triggerAutoSave();
+        }
+
+        function clearDiscount() {
+            document.getElementById('discountValue').value = '0';
+            applyDiscount();
+        }
 
         function setupSignatureCanvases() {
             ['preparedCanvas', 'clientCanvas'].forEach(id => {
                 const canvas = document.getElementById(id);
-                const ctx = canvas.getContext('2d');
+                if (!canvas) return;
                 
-                // Set canvas size
+                const ctx = canvas.getContext('2d');
                 canvas.width = canvas.offsetWidth;
                 canvas.height = 100;
                 
@@ -986,13 +1371,10 @@
                 let lastX = 0;
                 let lastY = 0;
 
-                // Mouse events
                 canvas.addEventListener('mousedown', startDrawing);
                 canvas.addEventListener('mousemove', draw);
                 canvas.addEventListener('mouseup', stopDrawing);
                 canvas.addEventListener('mouseout', stopDrawing);
-
-                // Touch events for mobile
                 canvas.addEventListener('touchstart', handleTouchStart);
                 canvas.addEventListener('touchmove', handleTouchMove);
                 canvas.addEventListener('touchend', stopDrawing);
@@ -1006,7 +1388,6 @@
 
                 function draw(e) {
                     if (!isDrawing) return;
-                    
                     const rect = canvas.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
@@ -1015,12 +1396,10 @@
                     ctx.lineWidth = 2;
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
-
                     ctx.beginPath();
                     ctx.moveTo(lastX, lastY);
                     ctx.lineTo(x, y);
                     ctx.stroke();
-
                     lastX = x;
                     lastY = y;
                 }
@@ -1041,7 +1420,6 @@
                 function handleTouchMove(e) {
                     if (!isDrawing) return;
                     e.preventDefault();
-                    
                     const touch = e.touches[0];
                     const rect = canvas.getBoundingClientRect();
                     const x = touch.clientX - rect.left;
@@ -1051,12 +1429,10 @@
                     ctx.lineWidth = 2;
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
-
                     ctx.beginPath();
                     ctx.moveTo(lastX, lastY);
                     ctx.lineTo(x, y);
                     ctx.stroke();
-
                     lastX = x;
                     lastY = y;
                 }
@@ -1068,16 +1444,15 @@
         function clearSignature(canvasId) {
             const { canvas, ctx } = canvases[canvasId];
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            triggerAutoSave();
         }
 
         function setupImageUploads() {
-            document.getElementById('preparedSignature').addEventListener('change', function(e) {
-                loadImageToCanvas(e, 'preparedCanvas');
-            });
-
-            document.getElementById('clientSignature').addEventListener('change', function(e) {
-                loadImageToCanvas(e, 'clientCanvas');
-            });
+            const prepSig = document.getElementById('preparedSignature');
+            const clientSig = document.getElementById('clientSignature');
+            
+            if (prepSig) prepSig.addEventListener('change', e => loadImageToCanvas(e, 'preparedCanvas'));
+            if (clientSig) clientSig.addEventListener('change', e => loadImageToCanvas(e, 'clientCanvas'));
         }
 
         function loadImageToCanvas(event, canvasId) {
@@ -1089,13 +1464,11 @@
                     img.onload = function() {
                         const { canvas, ctx } = canvases[canvasId];
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        
-                        // Scale image to fit canvas
                         const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
                         const x = (canvas.width / 2) - (img.width / 2) * scale;
                         const y = (canvas.height / 2) - (img.height / 2) * scale;
-                        
                         ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        triggerAutoSave();
                     };
                     img.src = e.target.result;
                 };
@@ -1103,28 +1476,24 @@
             }
         }
 
-        // Theme Switcher
         function changeTheme(theme) {
-            document.body.className = `theme-${theme}`;
+            document.body.className = currentLanguage === 'ar' ? `theme-${theme} rtl` : `theme-${theme}`;
             document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.theme-${theme}`).classList.add('active');
+            triggerAutoSave();
         }
 
-        // Currency Switcher
         function changeCurrency(currency) {
             currentCurrency = currency;
             document.querySelectorAll('.currency-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            
-            document.querySelectorAll('.currency-symbol').forEach(el => {
-                el.textContent = currency;
-            });
-
+            document.querySelectorAll('.currency-symbol').forEach(el => el.textContent = currency);
             calculateTotal();
+            triggerAutoSave();
         }
 
-        // PDF Download
         function downloadPDF() {
+            saveInvoiceNumber();
             window.print();
         }
 
@@ -1143,39 +1512,33 @@
                 { selector: '.ship-to .client-details div:nth-child(3) span', placeholder: 'City' }
             ];
 
-            const durationField = document.querySelector('.payment-terms div:nth-of-type(2) span[contenteditable="true"]');
-            if (durationField) {
-                addPlaceholderBehavior(durationField, '[e.g., 2-3 weeks, 1 month]');
-            }
+            const durationField = document.getElementById('durationField');
+            if (durationField) addPlaceholderBehavior(durationField, '[e.g., 2-3 weeks, 1 month]');
 
             [...billToFields, ...projectFields].forEach(field => {
                 const element = document.querySelector(field.selector);
-                if (element) {
-                    addPlaceholderBehavior(element, field.placeholder);
-                }
+                if (element) addPlaceholderBehavior(element, field.placeholder);
             });
         }
 
         function addPlaceholderBehavior(element, placeholderText) {
             element.addEventListener('focus', function() {
-                if (this.textContent.trim() === placeholderText) {
-                    this.textContent = '';
-                }
+                if (this.textContent.trim() === placeholderText) this.textContent = '';
             });
-
             element.addEventListener('blur', function() {
-                if (this.textContent.trim() === '') {
-                    this.textContent = placeholderText;
-                }
+                if (this.textContent.trim() === '') this.textContent = placeholderText;
             });
         }
 
         function resetInvoice() {
             if (confirm('Are you sure you want to reset the invoice? All changes will be lost.')) {
+                localStorage.removeItem('omogInvoiceDraft');
                 document.querySelector('.invoice-container').innerHTML = originalHTML;
                 setupPlaceholderClear();
                 setupSignatureCanvases();
                 setupImageUploads();
+                setupAutoSave();
+                loadInvoiceNumber();
             }
         }
 
@@ -1202,28 +1565,31 @@
             const cells = newRow.cells;
             const quantityCell = cells[3];
             const priceCell = cells[4];
-
             const descCell = cells[2];
+            
             descCell.addEventListener('focus', function() {
-                if (this.textContent === 'Description of item/service') {
-                    this.textContent = '';
-                }
+                if (this.textContent === 'Description of item/service') this.textContent = '';
             });
+            descCell.addEventListener('input', triggerAutoSave);
 
             quantityCell.addEventListener('input', function() {
                 calculateRowAmount(newRow);
                 calculateTotal();
+                triggerAutoSave();
             });
 
             priceCell.addEventListener('input', function() {
                 calculateRowAmount(newRow);
                 calculateTotal();
+                triggerAutoSave();
             });
 
             const fileInput = cells[1].querySelector('input[type="file"]');
             fileInput.addEventListener('change', function(e) {
                 handleItemImageUpload(e, cells[1].querySelector('.item-image-container'));
             });
+            
+            triggerAutoSave();
         }
 
         function uploadItemImage(container) {
@@ -1236,6 +1602,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     container.innerHTML = '<img src="' + e.target.result + '" alt="Item">';
+                    triggerAutoSave();
                 };
                 reader.readAsDataURL(file);
             }
@@ -1259,10 +1626,28 @@
                 subtotal += amount;
             }
 
+            // Apply discount
+            const discountValue = parseFloat(document.getElementById('discountValue').value) || 0;
+            let discountAmount = 0;
+            
+            if (discountValue > 0) {
+                if (discountType === 'percent') {
+                    discountAmount = (subtotal * discountValue) / 100;
+                } else {
+                    discountAmount = discountValue;
+                }
+            }
+
+            const total = subtotal - discountAmount;
+
+            // Convert to selected currency
             const convertedSubtotal = subtotal * currencyRates[currentCurrency];
+            const convertedDiscount = discountAmount * currencyRates[currentCurrency];
+            const convertedTotal = total * currencyRates[currentCurrency];
 
             document.querySelector('.subtotal-amount').textContent = convertedSubtotal.toFixed(2);
-            document.querySelector('.total-amount').textContent = convertedSubtotal.toFixed(2);
+            document.querySelector('.discount-amount').textContent = convertedDiscount.toFixed(2);
+            document.querySelector('.total-amount').textContent = convertedTotal.toFixed(2);
         }
 
         function deleteRow(btn) {
@@ -1276,6 +1661,7 @@
                     rows[i].cells[0].textContent = i + 1;
                 }
                 calculateTotal();
+                triggerAutoSave();
             }
         }
     </script>
