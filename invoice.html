@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - OMO G Trading And Interior Decoration</title>
+    <style>
+        /* Logo Styles */
+        .logo-container {
+            width: 170px;
+            height: 170px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 10px; /* Reduced from 15px to 10px */
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover {
+            border-color: #8B0000;
+            background: #fff;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-placeholder {
+            font-size: 10px;
+            color: #999;
+            text-align: center;
+            padding: 5px;
+        }
+
+        #logoInput {
+            display: none;
+        }
+
+        /* Control Buttons */
+        .controls {
+            max-width: 210mm;
+            margin: 10px auto; /* Reduced from 20px to 10px */
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-print {
+            background: #8B0000;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #660000;
+        }
+
+        .btn-reset {
+            background: #DAA520;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #B8860B;
+        }
+
+        .add-row-btn {
+            background: #DAA520;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .add-row-btn:hover {
+            background: #B8860B;
+        }
+
+        .delete-row-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .delete-row-btn:hover {
+            background: #c82333;
+        }
+
+        /* Editable field styles */
+        [contenteditable="true"] {
+            outline: none;
+            transition: background-color 0.2s;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: #fffef0;
+        }
+
+        [contenteditable="true"]:focus {
+            background-color: #ffffcc;
+        }
+    </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .invoice-container {
+            max-width: 210mm;
+            min-height: 330mm; /* Extended from 297mm to prevent cutoff */
+            margin: 20px auto;
+            background: white;
+            padding: 10mm 20mm 30mm 20mm; /* Reduced top padding from 25mm to 10mm */
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px; /* Reduced from 35px to 25px */
+            padding-bottom: 20px;
+            border-bottom: 3px solid #8B0000;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #8B0000;
+            margin-bottom: 10px;
+        }
+
+        .company-details {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .invoice-title {
+            text-align: right;
+            flex: 1;
+        }
+
+        .invoice-title h1 {
+            font-size: 36px;
+            color: #8B0000;
+            margin-bottom: 10px;
+        }
+
+        .invoice-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .invoice-meta p {
+            margin: 5px 0;
+        }
+
+        .client-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 40px;
+        }
+
+        .bill-to, .ship-to {
+            flex: 1;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #8B0000;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .client-details {
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .items-table thead {
+            background: #8B0000;
+            color: white;
+        }
+
+        .items-table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+
+        .items-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .totals {
+            width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .total-row.final {
+            border-top: 2px solid #8B0000;
+            margin-top: 10px;
+            padding-top: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #8B0000;
+        }
+
+        .payment-terms {
+            background: #f9f9f9;
+            border-left: 4px solid #DAA520;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .payment-terms h3 {
+            color: #8B0000;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .payment-terms p {
+            font-size: 12px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .bank-details {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 11px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .bank-details strong {
+            color: #8B0000;
+        }
+
+        /* Signature Section */
+        .signature-section {
+            margin-top: 50px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .signature-box {
+            flex: 1;
+        }
+
+        .signature-box h4 {
+            color: #8B0000;
+            margin-bottom: 15px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .signature-line {
+            border-bottom: 2px solid #333;
+            margin-bottom: 8px;
+            padding-bottom: 30px;
+        }
+
+        .signature-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .signature-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .date-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .date-line .line {
+            flex: 1;
+            border-bottom: 1px solid #999;
+            height: 20px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .office-info h4 {
+            color: #8B0000;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .office-info p {
+            line-height: 1.8;
+        }
+
+        .contact-info {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .invoice-container {
+                margin: 0;
+                box-shadow: none;
+                max-width: 100%;
+                min-height: auto;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .add-row-btn {
+                display: none;
+            }
+
+            .delete-row-btn {
+                display: none;
+            }
+
+            .logo-container {
+                border: none !important;
+                background: transparent !important;
+            }
+
+            .logo-placeholder {
+                display: none;
+            }
+
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Control Buttons -->
+    <div class="controls">
+        <button class="btn btn-print" onclick="window.print()">🖨️ Print Invoice</button>
+        <button class="btn btn-reset" onclick="resetInvoice()">🔄 Reset Invoice</button>
+    </div>
+
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="company-info">
+                <!-- Logo Upload -->
+                <div class="logo-container" onclick="document.getElementById('logoInput').click()">
+                    <div class="logo-placeholder">Click to upload logo</div>
+                </div>
+                <input type="file" id="logoInput" accept="image/*">
+                
+                <div class="company-name">OMO G TRADING AND INTERIOR DECORATION</div>
+                <div class="company-details">
+                    <strong>Qatar Office:</strong> Office 70, 2nd Floor Block E, Al Mirqab Mall, Doha, Qatar<br>
+                    <strong>CR No:</strong> 235664
+                </div>
+            </div>
+            <div class="invoice-title">
+                <h1>INVOICE</h1>
+                <div class="invoice-meta">
+                    <p><strong>Invoice #:</strong> <span contenteditable="true">INV-2025-001</span></p>
+                    <p><strong>Date:</strong> <span contenteditable="true">February 11, 2025</span></p>
+                    <p><strong>Due Date:</strong> <span contenteditable="true">March 13, 2025</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Information -->
+        <div class="client-section">
+            <div class="bill-to">
+                <div class="section-title">BILL TO:</div>
+                <div class="client-details">
+                    <div style="margin-bottom: 8px;"><strong>Name:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Client Name</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Company:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Company Name (if applicable)</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Address:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Full Address</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Phone:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">+974 XXXX XXXX</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Email:</strong> <span contenteditable="true" style="display: inline-block; min-width: 250px; border-bottom: 1px solid #ddd;">client@email.com</span></div>
+                </div>
+            </div>
+            <div class="ship-to">
+                <div class="section-title">PROJECT LOCATION:</div>
+                <div class="client-details">
+                    <div style="margin-bottom: 8px;"><strong>Address:</strong> <span contenteditable="true" style="display: inline-block; min-width: 300px; border-bottom: 1px solid #ddd;">Project Address</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Zone/Area:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">Zone/Area</span></div>
+                    <div style="margin-bottom: 8px;"><strong>City:</strong> <span contenteditable="true" style="display: inline-block; min-width: 200px; border-bottom: 1px solid #ddd;">City</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%">Item #</th>
+                    <th style="width: 37%">Description</th>
+                    <th style="width: 13%" class="text-center">Quantity</th>
+                    <th style="width: 13%" class="text-right">Unit Price</th>
+                    <th style="width: 17%" class="text-right">Amount (QAR)</th>
+                    <th style="width: 12%" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody id="itemsTableBody">
+                <!-- Items will be added here -->
+            </tbody>
+        </table>
+
+        <button class="add-row-btn" onclick="addRow()">➕ Add New Item</button>
+
+        <!-- Totals -->
+        <div class="totals-section">
+            <div class="totals">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span contenteditable="true">0.00 QAR</span>
+                </div>
+                <div class="total-row final">
+                    <span>TOTAL:</span>
+                    <span contenteditable="true">0.00 QAR</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Terms -->
+        <div class="payment-terms">
+            <h3>PAYMENT TERMS & NOTES</h3>
+            <p contenteditable="true">75% advance payment upon agreement, 25% upon project completion. Payment due within 7 days of invoice date.</p>
+            
+            <div class="bank-details" contenteditable="true">
+                <strong>Bank Name:</strong> [Your Bank Name]<br>
+                <strong>Account Name:</strong> OMO G TRADING AND INTERIOR DECORATION<br>
+                <strong>Account Number:</strong> [Your Account Number]<br>
+                <strong>IBAN:</strong> [Your IBAN Number]<br>
+                <strong>Swift Code:</strong> [Your Swift Code]
+            </div>
+
+            <div style="margin-top: 15px; padding: 10px; background: #fff; border-radius: 4px; border: 1px solid #ddd;">
+                <strong style="color: #8B0000;">Project Completion Duration:</strong> <span contenteditable="true" style="display: inline-block; min-width: 250px; border-bottom: 1px solid #ddd; padding: 2px 5px;">[e.g., 2-3 weeks, 1 month]</span>
+            </div>
+
+            <p style="margin-top: 10px;" contenteditable="true">Thank you.</p>
+        </div>
+
+        <!-- Terms and Conditions Section -->
+        <div class="payment-terms" style="border-left-color: #8B0000;">
+            <h3>TERMS & CONDITIONS</h3>
+            <div style="font-size: 11px; line-height: 1.8;">
+                <p style="margin-bottom: 8px;">• All items not explicitly listed here are excluded from the Project.</p>
+                
+                <p style="margin-bottom: 8px;">• The total project fee must be settled in full before final completion and handover.</p>
+                
+                <p style="margin-bottom: 8px;">• Any design changes requested after the approved design has been installed will be entirely at the client's financial responsibility.</p>
+                
+                <p style="margin-bottom: 8px;">• Delays in payment may result in project suspension or delivery delays.</p>
+                
+                <p style="margin-bottom: 8px;">• Clients are encouraged to communicate all design preferences clearly before execution begins, as changes made mid-process may incur extra charges and extend timelines.</p>
+                
+                <p style="margin-bottom: 8px;">• Materials, finishes, and features are subject to availability and may require substitution with equivalent options upon client approval.</p>
+                
+                <p style="margin-bottom: 8px;">• Unrestricted access to the project site must be granted during agreed working hours. Any delays caused by restricted access may impact project completion and could incur additional costs.</p>
+                
+                <p style="margin-bottom: 8px;">• Estimated timelines will be communicated at the start of the project. However, timelines may be adjusted due to material availability, client response delays, or unforeseen site conditions.</p>
+                
+                <p style="margin-bottom: 15px;">• A warranty period of [6-12 months] applies to installed items, covering workmanship and material defects under normal use. The warranty does not cover misuse, accidental damage, or unauthorized alterations.</p>
+                
+                <p style="margin-bottom: 10px; font-style: italic;">Thank you for choosing <strong style="color: #8B0000;">OMO G Trading And Interior Decoration</strong> for your project. We truly appreciate the trust you've placed in our team and look forward to delivering a design that exceeds your expectations.</p>
+                
+                <p style="margin-top: 15px; font-weight: bold; font-size: 12px;">By signing this document, the customer agrees to the services and conditions described in this document.</p>
+            </div>
+        </div>
+
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature-box">
+                <h4>PREPARED BY</h4>
+                <div class="signature-line"></div>
+                <div class="signature-name">OMO G Trading And Interior Decoration</div>
+                <div class="date-line">
+                    <span>Date:</span>
+                    <span class="line"></span>
+                </div>
+            </div>
+
+            <div class="signature-box">
+                <h4>ACCEPTED BY (CLIENT)</h4>
+                <div class="signature-line"></div>
+                <div class="signature-label">Client Name & Signature</div>
+                <div class="date-line">
+                    <span>Date:</span>
+                    <span class="line"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer with Office Information -->
+        <div class="footer">
+            <div class="office-info">
+                <h4>QATAR OFFICE</h4>
+                <p>Office 70, 2nd Floor Block E,<br>
+                Al Mirqab Mall, Doha, Qatar<br>
+                CR No: 235664</p>
+            </div>
+            <div class="office-info" style="text-align: right;">
+                <h4>CONTACT INFORMATION</h4>
+                <p>Tel: +974 7102 1381<br>
+                Email: info@omoginteriors.com<br>
+                Website: www.omoginteriors.com</p>
+            </div>
+        </div>
+
+        <div class="contact-info">
+            <p><strong>Booking:</strong> bookings@omoginteriors.com | <strong>Instagram:</strong> @omogdecor</p>
+        </div>
+    </div>
+
+    <script>
+        // Store original HTML for reset
+        const originalHTML = document.querySelector('.invoice-container').innerHTML;
+
+        // Clear placeholder text on focus for all editable fields
+        document.addEventListener('DOMContentLoaded', function() {
+            setupPlaceholderClear();
+        });
+        
+        function setupPlaceholderClear() {
+            // Bill To fields
+            const billToFields = [
+                { selector: '.bill-to .client-details div:nth-child(1) span', placeholder: 'Client Name' },
+                { selector: '.bill-to .client-details div:nth-child(2) span', placeholder: 'Company Name (if applicable)' },
+                { selector: '.bill-to .client-details div:nth-child(3) span', placeholder: 'Full Address' },
+                { selector: '.bill-to .client-details div:nth-child(4) span', placeholder: '+974 XXXX XXXX' },
+                { selector: '.bill-to .client-details div:nth-child(5) span', placeholder: 'client@email.com' }
+            ];
+            
+            // Project Location fields
+            const projectFields = [
+                { selector: '.ship-to .client-details div:nth-child(1) span', placeholder: 'Project Address' },
+                { selector: '.ship-to .client-details div:nth-child(2) span', placeholder: 'Zone/Area' },
+                { selector: '.ship-to .client-details div:nth-child(3) span', placeholder: 'City' }
+            ];
+            
+            // Project completion duration
+            const durationField = document.querySelector('.payment-terms div:nth-of-type(2) span[contenteditable="true"]');
+            if (durationField) {
+                addPlaceholderBehavior(durationField, '[e.g., 2-3 weeks, 1 month]');
+            }
+            
+            // Apply to all fields
+            [...billToFields, ...projectFields].forEach(field => {
+                const element = document.querySelector(field.selector);
+                if (element) {
+                    addPlaceholderBehavior(element, field.placeholder);
+                }
+            });
+        }
+        
+        function addPlaceholderBehavior(element, placeholderText) {
+            element.addEventListener('focus', function() {
+                if (this.textContent.trim() === placeholderText) {
+                    this.textContent = '';
+                }
+            });
+            
+            element.addEventListener('blur', function() {
+                if (this.textContent.trim() === '') {
+                    this.textContent = placeholderText;
+                }
+            });
+        }
+
+        // Logo upload functionality
+        document.getElementById('logoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const logoContainer = document.querySelector('.logo-container');
+                    logoContainer.innerHTML = '<img src="' + event.target.result + '" alt="Company Logo">';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Reset invoice function - properly clears all data
+        function resetInvoice() {
+            if (confirm('Are you sure you want to reset the invoice? All changes will be lost.')) {
+                document.querySelector('.invoice-container').innerHTML = originalHTML;
+                
+                // Re-attach logo input event listener after reset
+                setTimeout(() => {
+                    document.getElementById('logoInput').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file && file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                const logoContainer = document.querySelector('.logo-container');
+                                logoContainer.innerHTML = '<img src="' + event.target.result + '" alt="Company Logo">';
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        // Add new row function
+        function addRow() {
+            const tbody = document.getElementById('itemsTableBody');
+            const rowCount = tbody.rows.length + 1;
+            const newRow = tbody.insertRow();
+            
+            newRow.innerHTML = `
+                <td contenteditable="true">${rowCount}</td>
+                <td contenteditable="true" class="placeholder-field">Description of item/service</td>
+                <td class="text-center" contenteditable="true" class="quantity-field">1</td>
+                <td class="text-right" contenteditable="true" class="price-field">0.00</td>
+                <td class="text-right" contenteditable="true" class="amount-field">0.00</td>
+                <td class="text-center"><button class="delete-row-btn" onclick="deleteRow(this)">🗑️ Delete</button></td>
+            `;
+            
+            // Add event listeners for auto-calculation
+            const cells = newRow.cells;
+            const quantityCell = cells[2];
+            const priceCell = cells[3];
+            const amountCell = cells[4];
+            
+            // Clear placeholder on focus
+            const descCell = cells[1];
+            descCell.addEventListener('focus', function() {
+                if (this.textContent === 'Description of item/service') {
+                    this.textContent = '';
+                }
+            });
+            
+            // Auto-calculate amount when quantity or price changes
+            quantityCell.addEventListener('input', function() {
+                calculateRowAmount(newRow);
+                calculateTotal();
+            });
+            
+            priceCell.addEventListener('input', function() {
+                calculateRowAmount(newRow);
+                calculateTotal();
+            });
+        }
+        
+        // Calculate amount for a single row
+        function calculateRowAmount(row) {
+            const cells = row.cells;
+            const quantity = parseFloat(cells[2].textContent) || 0;
+            const price = parseFloat(cells[3].textContent.replace(/,/g, '')) || 0;
+            const amount = quantity * price;
+            cells[4].textContent = amount.toFixed(2);
+        }
+        
+        // Calculate total from all rows
+        function calculateTotal() {
+            const tbody = document.getElementById('itemsTableBody');
+            let subtotal = 0;
+            
+            for (let i = 0; i < tbody.rows.length; i++) {
+                const amountText = tbody.rows[i].cells[4].textContent;
+                const amount = parseFloat(amountText.replace(/,/g, '')) || 0;
+                subtotal += amount;
+            }
+            
+            // Update subtotal and total
+            const subtotalSpan = document.querySelector('.totals .total-row:first-child span:last-child');
+            const totalSpan = document.querySelector('.totals .total-row.final span:last-child');
+            
+            subtotalSpan.textContent = subtotal.toFixed(2) + ' QAR';
+            totalSpan.textContent = subtotal.toFixed(2) + ' QAR';
+        }
+
+        // Delete row function
+        function deleteRow(btn) {
+            const row = btn.parentNode.parentNode;
+            const tbody = document.getElementById('itemsTableBody');
+            
+            if (confirm('Delete this item?')) {
+                row.parentNode.removeChild(row);
+                // Renumber remaining rows
+                const rows = tbody.rows;
+                for (let i = 0; i < rows.length; i++) {
+                    rows[i].cells[0].textContent = i + 1;
+                }
+                // Recalculate total
+                calculateTotal();
+            }
+        }
+    </script>
+</body>
+</html>
