@@ -17,6 +17,25 @@
             --soft: #f8f6f2;
         }
 
+        /* Theme variations */
+        body.theme-royal {
+            --brand: #1e3a8a;
+            --brand-deep: #1e40af;
+            --accent: #c0a062;
+        }
+
+        body.theme-emerald {
+            --brand: #065f46;
+            --brand-deep: #064e3b;
+            --accent: #10b981;
+        }
+
+        body.theme-midnight {
+            --brand: #1f2937;
+            --brand-deep: #111827;
+            --accent: #6b7280;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -45,6 +64,73 @@
             box-shadow: 0 20px 45px rgba(24, 22, 18, 0.12);
         }
 
+        /* Theme Selector */
+        .theme-selector {
+            max-width: 210mm;
+            margin: 0 auto 10px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .theme-selector label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .theme-btn.active {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+        }
+
+        .theme-classic { background: linear-gradient(135deg, #7a1f1f 0%, #b28b3c 100%); }
+        .theme-royal { background: linear-gradient(135deg, #1e3a8a 0%, #c0a062 100%); }
+        .theme-emerald { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
+        .theme-midnight { background: linear-gradient(135deg, #1f2937 0%, #6b7280 100%); }
+
+        /* Currency Selector */
+        .currency-selector {
+            display: inline-flex;
+            gap: 5px;
+            background: var(--soft);
+            padding: 5px;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        .currency-btn {
+            padding: 5px 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+
+        .currency-btn.active {
+            background: var(--brand);
+            color: white;
+        }
+
         /* Logo Styles */
         .logo-container {
             width: 170px;
@@ -69,6 +155,7 @@
             display: flex;
             gap: 12px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -91,6 +178,16 @@
         .btn-print:hover {
             transform: translateY(-1px);
             box-shadow: 0 12px 22px rgba(122, 31, 31, 0.26);
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: #fff;
+        }
+
+        .btn-pdf:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(220, 38, 38, 0.26);
         }
 
         .btn-reset {
@@ -134,6 +231,37 @@
 
         .delete-row-btn:hover {
             background: #be3a4b;
+        }
+
+        /* Image Upload for Items */
+        .item-image-container {
+            width: 50px;
+            height: 50px;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #f9f9f9;
+            overflow: hidden;
+        }
+
+        .item-image-container:hover {
+            border-color: var(--accent);
+        }
+
+        .item-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-image-placeholder {
+            font-size: 9px;
+            color: #999;
+            text-align: center;
+            padding: 3px;
         }
 
         /* Editable fields */
@@ -358,7 +486,7 @@
             color: var(--brand);
         }
 
-        /* Signature */
+        /* Signature Section with Canvas */
         .signature-section {
             margin-top: 46px;
             margin-bottom: 30px;
@@ -383,10 +511,44 @@
             letter-spacing: 0.4px;
         }
 
-        .signature-line {
-            border-bottom: 2px solid #222;
+        .signature-canvas-area {
+            position: relative;
+            min-height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             margin-bottom: 8px;
-            padding-bottom: 32px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .signature-canvas {
+            display: block;
+            width: 100%;
+            height: 100px;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .signature-controls {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sig-btn {
+            padding: 4px 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .sig-btn:hover {
+            background: var(--soft);
+            border-color: var(--accent);
         }
 
         .signature-label {
@@ -443,7 +605,12 @@
             color: #6b7280;
         }
 
-        /* Mobile/Tablet Responsive - KEEP HEADER LAYOUT */
+        /* Hidden file inputs */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Mobile/Tablet Responsive */
         @media (max-width: 900px) {
             body {
                 padding: 10px 0;
@@ -455,7 +622,6 @@
                 border-radius: 10px;
             }
 
-            /* KEEP HEADER SIDE-BY-SIDE */
             .header {
                 flex-direction: row;
                 gap: 10px;
@@ -483,7 +649,6 @@
                 padding: 8px 10px;
             }
 
-            /* Stack client sections on mobile */
             .client-section {
                 flex-direction: column;
                 gap: 14px;
@@ -509,7 +674,6 @@
                 padding: 10px 20px;
             }
 
-            /* Make table scrollable on small screens */
             .items-table {
                 font-size: 11px;
             }
@@ -524,7 +688,6 @@
             }
         }
 
-        /* Extra small devices */
         @media (max-width: 600px) {
             .header {
                 flex-direction: column;
@@ -547,6 +710,10 @@
             .company-name {
                 font-size: 16px;
             }
+
+            .theme-selector {
+                flex-wrap: wrap;
+            }
         }
 
         @media print {
@@ -567,18 +734,30 @@
             }
 
             .controls,
+            .theme-selector,
             .add-row-btn,
-            .delete-row-btn {
-                display: none;
+            .delete-row-btn,
+            .currency-selector,
+            .signature-controls,
+            .sig-btn {
+                display: none !important;
             }
 
-            /* ENSURE HEADER STAYS SIDE-BY-SIDE IN PRINT */
             .header {
                 flex-direction: row !important;
             }
 
             .invoice-title {
                 text-align: right !important;
+            }
+
+            .signature-canvas-area,
+            .item-image-container {
+                border-style: solid;
+            }
+
+            .client-section {
+                flex-direction: row !important;
             }
 
             @page {
@@ -589,8 +768,19 @@
     </style>
 </head>
 <body>
+    <!-- Theme Selector -->
+    <div class="theme-selector">
+        <label>Theme:</label>
+        <button class="theme-btn theme-classic active" onclick="changeTheme('classic')" title="Classic Maroon"></button>
+        <button class="theme-btn theme-royal" onclick="changeTheme('royal')" title="Royal Blue"></button>
+        <button class="theme-btn theme-emerald" onclick="changeTheme('emerald')" title="Emerald Green"></button>
+        <button class="theme-btn theme-midnight" onclick="changeTheme('midnight')" title="Midnight Black"></button>
+    </div>
+
+    <!-- Control Buttons -->
     <div class="controls">
         <button class="btn btn-print" onclick="window.print()">🖨️ Print Invoice</button>
+        <button class="btn btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
         <button class="btn btn-reset" onclick="resetInvoice()">🔄 Reset Invoice</button>
     </div>
 
@@ -613,6 +803,11 @@
                     <p><strong>Invoice #:</strong> <span contenteditable="true">INV-2025-001</span></p>
                     <p><strong>Date:</strong> <span contenteditable="true">February 11, 2025</span></p>
                     <p><strong>Due Date:</strong> <span contenteditable="true">March 13, 2025</span></p>
+                    <div class="currency-selector">
+                        <button class="currency-btn active" onclick="changeCurrency('QAR')">QAR</button>
+                        <button class="currency-btn" onclick="changeCurrency('USD')">USD</button>
+                        <button class="currency-btn" onclick="changeCurrency('EUR')">EUR</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -642,10 +837,11 @@
             <thead>
                 <tr>
                     <th style="width: 8%">Item #</th>
-                    <th style="width: 37%">Description</th>
-                    <th style="width: 13%" class="text-center">Quantity</th>
-                    <th style="width: 13%" class="text-right">Unit Price</th>
-                    <th style="width: 17%" class="text-right">Amount (QAR)</th>
+                    <th style="width: 10%">Image</th>
+                    <th style="width: 32%">Description</th>
+                    <th style="width: 12%" class="text-center">Quantity</th>
+                    <th style="width: 12%" class="text-right">Unit Price</th>
+                    <th style="width: 14%" class="text-right">Amount (<span class="currency-symbol">QAR</span>)</th>
                     <th style="width: 12%" class="text-center">Action</th>
                 </tr>
             </thead>
@@ -658,11 +854,11 @@
             <div class="totals">
                 <div class="total-row">
                     <span>Subtotal:</span>
-                    <span contenteditable="true">0.00 QAR</span>
+                    <span><span class="subtotal-amount">0.00</span> <span class="currency-symbol">QAR</span></span>
                 </div>
                 <div class="total-row final">
                     <span>TOTAL:</span>
-                    <span contenteditable="true">0.00 QAR</span>
+                    <span><span class="total-amount">0.00</span> <span class="currency-symbol">QAR</span></span>
                 </div>
             </div>
         </div>
@@ -706,7 +902,14 @@
         <div class="signature-section">
             <div class="signature-box">
                 <h4>PREPARED BY</h4>
-                <div class="signature-line"></div>
+                <div class="signature-controls">
+                    <button class="sig-btn" onclick="clearSignature('preparedCanvas')">Clear</button>
+                    <button class="sig-btn" onclick="document.getElementById('preparedSignature').click()">Upload</button>
+                </div>
+                <div class="signature-canvas-area">
+                    <canvas id="preparedCanvas" class="signature-canvas"></canvas>
+                </div>
+                <input type="file" id="preparedSignature" accept="image/*">
                 <div class="signature-name">OMO G Trading And Interior Decoration</div>
                 <div class="date-line">
                     <span>Date:</span>
@@ -716,7 +919,14 @@
 
             <div class="signature-box">
                 <h4>ACCEPTED BY (CLIENT)</h4>
-                <div class="signature-line"></div>
+                <div class="signature-controls">
+                    <button class="sig-btn" onclick="clearSignature('clientCanvas')">Clear</button>
+                    <button class="sig-btn" onclick="document.getElementById('clientSignature').click()">Upload</button>
+                </div>
+                <div class="signature-canvas-area">
+                    <canvas id="clientCanvas" class="signature-canvas"></canvas>
+                </div>
+                <input type="file" id="clientSignature" accept="image/*">
                 <div class="signature-label">Client Name & Signature</div>
                 <div class="date-line">
                     <span>Date:</span>
@@ -747,10 +957,176 @@
 
     <script>
         const originalHTML = document.querySelector('.invoice-container').innerHTML;
+        let currentCurrency = 'QAR';
+        const currencyRates = {
+            'QAR': 1,
+            'USD': 0.27,
+            'EUR': 0.25
+        };
+
+        // Signature Canvas Setup
+        const canvases = {};
 
         document.addEventListener('DOMContentLoaded', function() {
             setupPlaceholderClear();
+            setupSignatureCanvases();
+            setupImageUploads();
         });
+
+        function setupSignatureCanvases() {
+            ['preparedCanvas', 'clientCanvas'].forEach(id => {
+                const canvas = document.getElementById(id);
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size
+                canvas.width = canvas.offsetWidth;
+                canvas.height = 100;
+                
+                let isDrawing = false;
+                let lastX = 0;
+                let lastY = 0;
+
+                // Mouse events
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', stopDrawing);
+                canvas.addEventListener('mouseout', stopDrawing);
+
+                // Touch events for mobile
+                canvas.addEventListener('touchstart', handleTouchStart);
+                canvas.addEventListener('touchmove', handleTouchMove);
+                canvas.addEventListener('touchend', stopDrawing);
+
+                function startDrawing(e) {
+                    isDrawing = true;
+                    const rect = canvas.getBoundingClientRect();
+                    lastX = e.clientX - rect.left;
+                    lastY = e.clientY - rect.top;
+                }
+
+                function draw(e) {
+                    if (!isDrawing) return;
+                    
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    lastX = x;
+                    lastY = y;
+                }
+
+                function stopDrawing() {
+                    isDrawing = false;
+                }
+
+                function handleTouchStart(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const rect = canvas.getBoundingClientRect();
+                    lastX = touch.clientX - rect.left;
+                    lastY = touch.clientY - rect.top;
+                    isDrawing = true;
+                }
+
+                function handleTouchMove(e) {
+                    if (!isDrawing) return;
+                    e.preventDefault();
+                    
+                    const touch = e.touches[0];
+                    const rect = canvas.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    lastX = x;
+                    lastY = y;
+                }
+
+                canvases[id] = { canvas, ctx };
+            });
+        }
+
+        function clearSignature(canvasId) {
+            const { canvas, ctx } = canvases[canvasId];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function setupImageUploads() {
+            document.getElementById('preparedSignature').addEventListener('change', function(e) {
+                loadImageToCanvas(e, 'preparedCanvas');
+            });
+
+            document.getElementById('clientSignature').addEventListener('change', function(e) {
+                loadImageToCanvas(e, 'clientCanvas');
+            });
+        }
+
+        function loadImageToCanvas(event, canvasId) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const { canvas, ctx } = canvases[canvasId];
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        
+                        // Scale image to fit canvas
+                        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                        const x = (canvas.width / 2) - (img.width / 2) * scale;
+                        const y = (canvas.height / 2) - (img.height / 2) * scale;
+                        
+                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Theme Switcher
+        function changeTheme(theme) {
+            document.body.className = `theme-${theme}`;
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.theme-${theme}`).classList.add('active');
+        }
+
+        // Currency Switcher
+        function changeCurrency(currency) {
+            currentCurrency = currency;
+            document.querySelectorAll('.currency-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.currency-symbol').forEach(el => {
+                el.textContent = currency;
+            });
+
+            calculateTotal();
+        }
+
+        // PDF Download
+        function downloadPDF() {
+            window.print();
+        }
 
         function setupPlaceholderClear() {
             const billToFields = [
@@ -798,6 +1174,8 @@
             if (confirm('Are you sure you want to reset the invoice? All changes will be lost.')) {
                 document.querySelector('.invoice-container').innerHTML = originalHTML;
                 setupPlaceholderClear();
+                setupSignatureCanvases();
+                setupImageUploads();
             }
         }
 
@@ -808,18 +1186,24 @@
 
             newRow.innerHTML = `
                 <td contenteditable="true">${rowCount}</td>
+                <td class="text-center">
+                    <div class="item-image-container" onclick="uploadItemImage(this)">
+                        <div class="item-image-placeholder">Add<br>image</div>
+                    </div>
+                    <input type="file" accept="image/*" style="display: none;">
+                </td>
                 <td contenteditable="true" class="placeholder-field">Description of item/service</td>
                 <td class="text-center" contenteditable="true" class="quantity-field">1</td>
                 <td class="text-right" contenteditable="true" class="price-field">0.00</td>
-                <td class="text-right" contenteditable="true" class="amount-field">0.00</td>
+                <td class="text-right amount-field">0.00</td>
                 <td class="text-center"><button class="delete-row-btn" onclick="deleteRow(this)">🗑️ Delete</button></td>
             `;
 
             const cells = newRow.cells;
-            const quantityCell = cells[2];
-            const priceCell = cells[3];
+            const quantityCell = cells[3];
+            const priceCell = cells[4];
 
-            const descCell = cells[1];
+            const descCell = cells[2];
             descCell.addEventListener('focus', function() {
                 if (this.textContent === 'Description of item/service') {
                     this.textContent = '';
@@ -835,14 +1219,34 @@
                 calculateRowAmount(newRow);
                 calculateTotal();
             });
+
+            const fileInput = cells[1].querySelector('input[type="file"]');
+            fileInput.addEventListener('change', function(e) {
+                handleItemImageUpload(e, cells[1].querySelector('.item-image-container'));
+            });
+        }
+
+        function uploadItemImage(container) {
+            container.parentElement.querySelector('input[type="file"]').click();
+        }
+
+        function handleItemImageUpload(event, container) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    container.innerHTML = '<img src="' + e.target.result + '" alt="Item">';
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         function calculateRowAmount(row) {
             const cells = row.cells;
-            const quantity = parseFloat(cells[2].textContent) || 0;
-            const price = parseFloat(cells[3].textContent.replace(/,/g, '')) || 0;
+            const quantity = parseFloat(cells[3].textContent) || 0;
+            const price = parseFloat(cells[4].textContent.replace(/,/g, '')) || 0;
             const amount = quantity * price;
-            cells[4].textContent = amount.toFixed(2);
+            cells[5].textContent = amount.toFixed(2);
         }
 
         function calculateTotal() {
@@ -850,16 +1254,15 @@
             let subtotal = 0;
 
             for (let i = 0; i < tbody.rows.length; i++) {
-                const amountText = tbody.rows[i].cells[4].textContent;
+                const amountText = tbody.rows[i].cells[5].textContent;
                 const amount = parseFloat(amountText.replace(/,/g, '')) || 0;
                 subtotal += amount;
             }
 
-            const subtotalSpan = document.querySelector('.totals .total-row:first-child span:last-child');
-            const totalSpan = document.querySelector('.totals .total-row.final span:last-child');
+            const convertedSubtotal = subtotal * currencyRates[currentCurrency];
 
-            subtotalSpan.textContent = subtotal.toFixed(2) + ' QAR';
-            totalSpan.textContent = subtotal.toFixed(2) + ' QAR';
+            document.querySelector('.subtotal-amount').textContent = convertedSubtotal.toFixed(2);
+            document.querySelector('.total-amount').textContent = convertedSubtotal.toFixed(2);
         }
 
         function deleteRow(btn) {
