@@ -443,30 +443,109 @@
             color: #6b7280;
         }
 
+        /* Mobile/Tablet Responsive - KEEP HEADER LAYOUT */
         @media (max-width: 900px) {
+            body {
+                padding: 10px 0;
+            }
+
             .invoice-container {
                 margin: 10px;
-                padding: 7mm 7mm 15mm;
+                padding: 7mm 5mm 15mm;
                 border-radius: 10px;
             }
 
+            /* KEEP HEADER SIDE-BY-SIDE */
             .header {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .logo-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .company-name {
+                font-size: 18px;
+            }
+
+            .company-details {
+                font-size: 10px;
+            }
+
+            .invoice-title h1 {
+                font-size: 28px;
+            }
+
+            .invoice-meta {
+                font-size: 10px;
+                padding: 8px 10px;
+            }
+
+            /* Stack client sections on mobile */
+            .client-section {
                 flex-direction: column;
                 gap: 14px;
             }
 
-            .invoice-title {
-                text-align: left;
+            .signature-section {
+                flex-direction: column;
+                gap: 20px;
             }
 
-            .invoice-meta {
-                display: block;
-                width: 100%;
+            .footer {
+                flex-direction: column;
+                gap: 14px;
             }
 
             .controls {
                 flex-wrap: wrap;
                 padding: 0 10px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 10px 20px;
+            }
+
+            /* Make table scrollable on small screens */
+            .items-table {
+                font-size: 11px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 8px 6px;
+            }
+
+            .totals {
+                width: 100%;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+            }
+
+            .invoice-title {
+                text-align: left;
+                margin-top: 10px;
+            }
+
+            .invoice-title h1 {
+                font-size: 24px;
+            }
+
+            .logo-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .company-name {
+                font-size: 16px;
             }
         }
 
@@ -491,6 +570,15 @@
             .add-row-btn,
             .delete-row-btn {
                 display: none;
+            }
+
+            /* ENSURE HEADER STAYS SIDE-BY-SIDE IN PRINT */
+            .header {
+                flex-direction: row !important;
+            }
+
+            .invoice-title {
+                text-align: right !important;
             }
 
             @page {
